@@ -1,0 +1,20 @@
+energy calculator
+
+usage:
+just serve the files in your prefered way, all the logic happens client side
+
+
+features:
+*calulates EPpet
+*shows relvevant limits
+*prints a fancy energy certificate
+
+
+
+energy.html 	| webpage
+energyprint.html| webpage for printing
+energy.js 	| core logic
+glue.js   	| interaction between logic and html
+strings.js	| ui strings
+style.css	| 
+
