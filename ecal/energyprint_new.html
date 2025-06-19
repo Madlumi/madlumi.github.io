@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Energideklaration – Print Layout (Bleed!)</title>
+  <link rel="stylesheet" href="style.css" media="screen" />
+  <style>
+
+    /* Screen-only styles */
+    @media screen {
+      /* Hide print content */
+      #printArea { display: none; }
+
+      /* Two-column layout */
+      #screenUI { display: flex; gap: 1rem; padding: 1rem; }
+      #dataEntry { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+
+      :root { --preview-scale: 0.42; }
+      #previewContainer {
+        flex: none;
+        width: calc(148.5mm * var(--preview-scale));
+        height: calc(210mm * var(--preview-scale));
+        box-sizing: content-box;
+        border: 3px solid #888;
+        background: #000;
+        position: relative;
+        overflow: hidden;
+      }
+      #previewContent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 148.5mm;
+        height: 210mm;
+        background: #fff;
+        transform: scale(var(--preview-scale));
+        transform-origin: top left;
+      }
+
+      .input-section {
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        background: var(--form-bg);
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: 0.5rem;
+        row-gap: 0.5rem;
+        align-items: center;
+      }
+      .input-section label { margin: 0; }
+      .input-section input { width: 100%; }
+
+      /* Print button */
+      #printButton { padding: 1rem; font-size: 1.1rem; background: #3a8f4e; color: #fff; border: none; cursor: pointer; }
+      #printButton:hover { background: #287f53; }
+
+    }
+
+    /* Print-only styles */
+    @media print {
+      /* Hide screen UI */
+      #screenUI { display: none !important; }
+      @page { margin: 0; size: 148.5mm 210mm; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        font-size: 10pt;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+      }
+      #printArea { display: block; }
+      .container { border: none !important; page-break-inside: avoid; }
+      .classes-box { border: 1px solid #000 !important; }
+    }
+
+    /* Font classes */
+    .font-arial { font-family: Arial, sans-serif; font-weight: normal; }
+    .font-arial-bold { font-family: Arial, sans-serif; font-weight: bold; }
+    .font-helvetica { font-family: Helvetica, Arial, sans-serif; font-weight: normal; }
+    .font-helvetica-bold { font-family: Helvetica, Arial, sans-serif; font-weight: bold; }
+
+    /* Absolute positioning for print elements */
+    .container { position: absolute; box-sizing: border-box; padding: 0; }
+    .print-line { display: block; min-height: 1em; }
+  </style>
+</head>
+<body>
+  <!-- Screen UI -->
+  <div id="screenUI">
+    <div id="dataEntry">
+      <div class="input-section">
+        <label for="addressInput">Byggnadens adress:</label>
+        <input type="text" id="addressInput" placeholder="Oceangränd 1 B2">
+        <label for="municipalityInput">Kommun:</label>
+        <input type="text" id="municipalityInput" placeholder="Jomala kommun">
+        <label for="yearInput">Nybyggnadsår:</label>
+        <input type="text" id="yearInput" placeholder="t.ex. 2009">
+        <label for="idInput">Energideklarations-ID:</label>
+        <input type="text" id="idInput" placeholder="t.ex. 3671">
+        <label for="energyInput">Energiprestanda, primärenergital:</label>
+        <input type="text" id="energyInput" placeholder="t.ex. 162"> 
+        <label for="requirementInput">Krav vid uppförande av<br> ny byggnad, primärenergital:</label>
+        <input type="text" id="requirementInput" placeholder="100 kWh/m² och år">
+        <label for="heatingInput">Uppvärmningssystem:</label>
+        <input type="text" id="heatingInput" placeholder="Värmepump-luft/luft (el) och el">
+        <label for="radonInput">Radonmätning:</label>
+        <input type="text" id="radonInput" placeholder="Inte utförd">
+        <label for="ovkInput">Ventilationskontroll (OVK):</label>
+        <input type="text" id="ovkInput" placeholder="Utförd">
+        <label for="suggestionsInput">Åtgärdsförslag:</label>
+        <input type="text" id="suggestionsInput" placeholder="Har lämnats">
+        <label for="performedInput">Energideklarationen är utförd av:</label>
+        <input type="text" id="performedInput" placeholder="Namn Efternamn, LL, 2025-05-27">
+        <label for="validInput">Energideklarationen är giltig till:</label>
+        <input type="text" id="validInput" placeholder="2035-05-27">
+      </div>
+      <button id="printButton" onclick="window.print()">Skriv ut</button>
+    </div>
+    <div id="previewContainer"><div id="previewContent"></div></div>
+  </div>
+
+  <!-- Printable area -->
+  <div id="printArea">
+    <div style="height:10mm;"></div>
+    <div style="position:fixed; top:10mm; left:0; width:148.5mm; height:15mm; background:#000;">
+      <div class="font-helvetica" style="position:absolute; top:0; left:15mm; font-size:10pt; color:#fff;">sammanfattning av</div>
+      <div class="font-helvetica-bold" style="position:absolute; top:4mm; left:15mm; font-size:30pt; color:#fff;">ENERGIDEKLARATION</div>
+    </div>
+
+    <div class="container" style="left:8mm; top:29.5mm; width:73mm; height:12.5mm; font-size:13pt;">
+      <div class="print-line"><span id="addressDisplay" class="font-arial"></span></div>
+      <div class="print-line"><span id="municipalityDisplay" class="font-helvetica"></span></div>
+    </div>
+    <div class="container" style="left:8mm; top:42.5mm; width:73mm; height:13.5mm; font-size:10pt;">
+      <div class="print-line"><span class="font-arial-bold">Nybyggnadsår:</span> <span id="yearDisplay" class="font-arial"></span></div>
+      <div class="print-line"><span class="font-helvetica-bold">Energideklarations-ID:</span> <span id="idDisplay" class="font-helvetica"></span></div>
+    </div>
+
+    <div class="container classes-box" style="left:8mm; top:56mm; width:73mm; height:90mm; overflow:hidden;">
+      <div class="font-helvetica-bold" style="font-size:11pt; padding:4px;">ENERGIKLASSER</div>
+      <svg id="energyClasses" width="100%" height="calc(100% - 10mm)" viewBox="0 0 73 90" preserveAspectRatio="xMinYMin meet"></svg>
+    </div>
+
+    <div class="container" style="left:8mm; top:164mm; width:73mm; height:15.5mm; font-size:10pt;">
+      <span class="font-helvetica-bold">Energideklarationen i sin helhet</span><br>
+      <span class="font-arial-bold">finns hos byggnadens ägare.</span>
+    </div>
+    <div class="container" style="left:8mm; top:179.5mm; width:73mm; height:10.5mm; font-size:10pt;">
+      <span class="font-arial-bold">För mer information:</span><br>
+      <span class="font-helvetica">www.regeringen.ax</span>
+    </div>
+    <div class="container" style="left:8mm; top:190.5mm; width:73mm; height:9.5mm; font-size:10pt;">
+      <span class="font-arial">Sammanfattningen är upprättad enligt Ålands landskapslag (2014:31) om energideklaration för byggnader.</span>
+    </div>
+
+    <div class="container" style="left:87.5mm; top:56mm; width:calc(26.5mm - 1.5px); height:26.5mm; overflow:hidden;">
+      <svg id="houseSvg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;" preserveAspectRatio="xMinYMin meet">
+        <polygon id="houseRoof" stroke="none" />
+        <polygon id="houseBody" stroke="none" />
+      </svg>
+    </div>
+    <div class="container" style="left:86mm; top:83.5mm; width:28mm; height:7.5mm; font-size:8pt;">
+      <div class="font-arial" style="text-align:center;">DENNA BYGGNADS ENERGIKLASS</div>
+    </div>
+
+    <div class="container" style="left:86mm; top:100mm; width:56.5mm; height:110mm; font-size:10pt;">
+      <div class="print-line" style="white-space:nowrap;"><strong>Energiprestanda, primärenergital:</strong></div>
+      <div class="print-line"><span id="energyDisplay"></span> kWh/m² och år</div>
+      <div class="print-line"><strong>Krav vid uppförande av<br> ny byggnad, primärenergital:</strong></div>
+      <div class="print-line"><span id="requirementDisplay"></span></div>
+      <div class="print-line"><strong>Uppvärmningssystem:</strong></div>
+      <div class="print-line"><span id="heatingDisplay"></span></div>
+      <div class="print-line"><strong>Radonmätning:</strong></div>
+      <div class="print-line"><span id="radonDisplay"></span></div>
+      <div class="print-line"><strong>Ventilationskontroll (OVK):</strong></div>
+      <div class="print-line"><span id="ovkDisplay"></span></div>
+      <div class="print-line"><strong>Åtgärdsförslag:</strong></div>
+      <div class="print-line"><span id="suggestionsDisplay"></span></div>
+      <div class="print-line"><strong>Energideklarationen är utförd av:</strong></div>
+      <div class="print-line"><span id="performedDisplay"></span></div>
+      <div class="print-line"><strong>Energideklarationen är giltig till:</strong></div>
+      <div class="print-line"><span id="validDisplay"></span></div>
+    </div>
+  </div>
+
+  <script src="epclass.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const labels = Object.keys(window.EPClass.data);
+      const colors = labels.map(l => window.EPClass.data[l].colour);
+      const config = {
+        labels,
+        colors,
+        highlightIdx: 0,
+        container: { width:73, height:90 },
+        margins: { top:10, bottom:5, gap:3 },
+        arrow: { minNorm:0.2, maxNorm:0.9, fontSize:5 },
+        letterOffset: { x:-4, y:0.5 },
+        outline: { black:2.5, white:1 },
+        house: { roofThickness:9, roofGap:6, fontSize:50, letterOffset: { x:0, y:20 } }
+      };
+      // Bind inputs to displays
+      const bind = (inputId, displayId) => {
+        const inp = document.getElementById(inputId);
+        const disp = document.getElementById(displayId);
+        const handler = () => { disp.textContent = inp.value; updateAll(); };
+        inp.addEventListener('input', handler);
+        disp.textContent = inp.value;
+      };
+      ['addressInput','municipalityInput','yearInput','idInput',
+       'energyInput','requirementInput','heatingInput','radonInput',
+       'ovkInput','suggestionsInput','performedInput','validInput'].forEach(id => {
+        bind(id, id.replace('Input','Display'));
+      });
+
+      // Prefill fields from query parameters
+      const params = new URLSearchParams(window.location.search);
+      const paramMap = {
+        address: 'addressInput',
+        municipality: 'municipalityInput',
+        year: 'yearInput',
+        id: 'idInput',
+        ep: 'energyInput',
+        eplim: 'requirementInput',
+        heating: 'heatingInput',
+        radon: 'radonInput',
+        ovk: 'ovkInput',
+        suggestions: 'suggestionsInput',
+        performed: 'performedInput',
+        valid: 'validInput'
+      };
+      for (const [p, id] of Object.entries(paramMap)) {
+        const val = params.get(p);
+        if (val !== null) {
+          document.getElementById(id).value = val;
+        }
+      }
+
+      const roof = document.getElementById('houseRoof'), body = document.getElementById('houseBody');
+      const rt = config.house.roofThickness, rg = config.house.roofGap;
+      roof.setAttribute('points', [[0,50],[50,0],[100,50],[100-rt,50],[50,rt],[rt,50]].map(p=>p.join(',')).join(' '));
+      body.setAttribute('points', [[rt,100],[100-rt,100],[100-rt,50+rg],[50,rt+rg],[rt,50+rg]].map(p=>p.join(',')).join(' '));
+      const houseSvg = document.getElementById('houseSvg');
+      const houseLetter = document.createElementNS(houseSvg.namespaceURI, 'text');
+      houseLetter.setAttribute('x', 50 + config.house.letterOffset.x);
+      houseLetter.setAttribute('y', 55 + config.house.letterOffset.y);
+      houseLetter.setAttribute('font-size', `${config.house.fontSize}pt`);
+      houseLetter.setAttribute('fill', '#000');
+      houseLetter.setAttribute('font-weight', 'bold');
+      houseLetter.setAttribute('text-anchor', 'middle');
+      houseLetter.setAttribute('dominant-baseline', 'middle');
+      houseSvg.appendChild(houseLetter);
+      const svg = document.getElementById('energyClasses');
+
+      function drawVisuals() {
+        const n = config.labels.length;
+        const hAvail = config.container.height - config.margins.top - config.margins.bottom - (n-1) * config.margins.gap;
+        const arrowH = hAvail / n;
+        const tipW = arrowH * Math.sqrt(3) / 2;
+
+        roof.setAttribute('fill', config.colors[config.highlightIdx]);
+        body.setAttribute('fill', config.colors[config.highlightIdx]);
+        houseLetter.textContent = config.labels[config.highlightIdx];
+
+        svg.innerHTML = '';
+        const sy = config.margins.top + config.highlightIdx * (arrowH + config.margins.gap);
+        const wSel = config.arrow.minNorm * config.container.width + config.highlightIdx * ((config.arrow.maxNorm - config.arrow.minNorm) * config.container.width / (n-1));
+        const selPts = [[0,sy],[wSel,sy],[wSel+tipW,sy+arrowH/2],[wSel,sy+arrowH],[0,sy+arrowH]].map(p=>p.join(',')).join(' ');
+        [{color:'#000',width:config.outline.black},{color:'#fff',width:config.outline.white}].forEach(o => {
+          const pElem = document.createElementNS(svg.namespaceURI,'polygon');
+          pElem.setAttribute('points', selPts);
+          pElem.setAttribute('fill','none');
+          pElem.setAttribute('stroke', o.color);
+          pElem.setAttribute('stroke-width', o.width);
+          svg.appendChild(pElem);
+        });
+        config.labels.forEach((lbl, idx) => {
+          const y = config.margins.top + idx * (arrowH + config.margins.gap);
+          const w = config.arrow.minNorm * config.container.width + idx * ((config.arrow.maxNorm - config.arrow.minNorm) * config.container.width / (n-1));
+          const pts = [[0,y],[w,y],[w+tipW,y+arrowH/2],[w,y+arrowH],[0,y+arrowH]].map(p=>p.join(',')).join(' ');
+          const poly = document.createElementNS(svg.namespaceURI,'polygon');
+          poly.setAttribute('points', pts);
+          poly.setAttribute('fill', config.colors[idx]);
+          svg.appendChild(poly);
+          const txt = document.createElementNS(svg.namespaceURI,'text');
+          txt.setAttribute('x', w + tipW/2 + config.letterOffset.x);
+          txt.setAttribute('y', y + arrowH/2 + config.letterOffset.y);
+          txt.setAttribute('font-size', `${config.arrow.fontSize}pt`);
+          txt.setAttribute('fill', '#000');
+          txt.setAttribute('text-anchor','middle');
+          txt.setAttribute('dominant-baseline','middle');
+          txt.textContent = lbl;
+          svg.appendChild(txt);
+        });
+      }
+
+      function computeClass() {
+        const ep = parseFloat(document.getElementById('energyInput').value);
+        const lim = parseFloat(document.getElementById('requirementInput').value);
+        const cls = window.EPClass.classify(ep, lim);
+        const idx = config.labels.indexOf(cls);
+        if(idx !== -1) config.highlightIdx = idx;
+      }
+
+      function updatePreview() {
+        const preview = document.getElementById('previewContent');
+        preview.innerHTML = document.getElementById('printArea').innerHTML;
+      }
+
+      function updateAll(){
+        computeClass();
+        drawVisuals();
+        updatePreview();
+      }
+
+      updateAll();
+    });
+  </script>
+</body>
+</html>

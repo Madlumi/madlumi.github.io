@@ -35,6 +35,40 @@ const E_name = [
 ];
 
 //============================
+//=Tappvarmvatten=============
+//============================
+class TvvEntry {
+  constructor(name, factor, etype) {
+    this.name = name;
+    this.factor = factor;
+    this.etype = etype;
+  }
+}
+
+const tvvFactors = [
+  new TvvEntry("Fjärrvärme", 1.00, EType.FJARRVARME),
+  new TvvEntry("El, direktverkande och elpanna", 1.00, EType.ELECTRIC),
+  new TvvEntry("El, frånluftsvärmepump", 1.70, EType.ELECTRIC),
+  new TvvEntry("El, uteluft-vattenvärmepump", 2.00, EType.ELECTRIC),
+  new TvvEntry("El, markvärmepump (berg, mark, sjö)", 2.50, EType.ELECTRIC),
+  new TvvEntry("Biobränslepanna (pellets, ved, flis m.m.)", 0.75, EType.BIOBRANSLE),
+  new TvvEntry("Olja", 0.85, EType.FOSSIL_OLJA),
+  new TvvEntry("Gaspanna", 0.90, EType.FOSSIL_GAS)
+];
+
+const TvvMult = [
+  /* SMALL */ 20,
+  /* MULTI */ 25,
+  /* LOCAL */ 2
+];
+
+const PERSON_HEAT = 80; // watts
+// Expose for UI defaults when running in the browser
+if (typeof window !== 'undefined') {
+  window.PERSON_HEAT = PERSON_HEAT;
+}
+
+//============================
 //=Location===================
 //============================
 class Location {
@@ -74,6 +108,9 @@ class Energy {
     this.cool = Array(EType.E_TYPE_COUNT).fill(0);
     this.watr = Array(EType.E_TYPE_COUNT).fill(0);
     this.fast = Array(EType.E_TYPE_COUNT).fill(0);
+    this.heat_ren = Array(EType.E_TYPE_COUNT).fill(0);
+    this.cool_ren = Array(EType.E_TYPE_COUNT).fill(0);
+    this.watr_ren = Array(EType.E_TYPE_COUNT).fill(0);
   }
 }
 
@@ -81,17 +118,25 @@ class Energy {
 //=House======================
 //============================
 class House {
-  constructor(type, Atemp, location) {
+  constructor(type, Atemp, location, tvvSrc = tvvFactors[0]) {
     this.type   = type;      // HouseType
     this.Atemp  = Atemp;     // Heated area in m²
     this.E      = new Energy(); // Energy uses
     this.L      = location;  // Location object
     this.flow   = 0.0;       // Instantaneous airflow (q) [l/s·m²]
     this.qavg   = 0.0;       // Average airflow (q_medel) [l/s·m²]
+    this.Rooms  = 0;         // rooms+kitchens
+    this.HouseHoldEnergy = 0.0; // placeholder for household energy
+    this.uval   = { U_roof: 0.0 }; // list of u-values
+    this.energyusage = null; // pointer/function for usage data
     this.foot2  = false;     // Footnote‐2 flag (LOCAL)
     this.foot3  = false;     // Footnote‐3 flag (LOCAL)
     this.foot4  = false;     // Footnote‐4 flag (MULTI)
     this.foot5  = false;     // Footnote‐5 flag (MULTI)
+    this.tvvSrc = tvvSrc;    // source of hot water
+
+    // standardised tappvarmvatten energy use
+    this.E.watr[tvvSrc.etype] = Tvv(this);
   }
 }
 
@@ -136,14 +181,13 @@ function el3(F_geo, flow, atemp) {
 }
 
 function ep4(F_geo, flow, qavg, atemp, Foot4) {
-  qavg = flow; // treat instantaneous as average here
   // ... i flerbostadshus där Atemp är 50 m² eller större
   if (atemp < 50) { return 0; }
   // q_medel är uteluftsflödet i temperaturreglerade utrymmen överstiger 0,35 l/s·m²
   if (qavg <= 0.35) { return 0; }
   // Tillägget kan enbart användas på grund av krav på ventilation i särskilda utrymmen som badrum, toalett och kök
   if (!Foot4) { return 0; }
-  // får högst tillgodoräknas upp till 0,6 l/s·m²
+  // q_medel får högst tillgodoräknas upp till 0,6 l/s·m²
   if (qavg > 0.6) { qavg = 0.6; }
   return 40 * (qavg - 0.35);
 }
@@ -160,6 +204,10 @@ function el5(F_geo, flow, atemp, Foot5) {
   return (0.022 + 0.02 * (F_geo - 1.0)) * (flow - 0.35) * atemp;
 }
 
+function Tvv(house) {
+  return TvvMult[house.type] * house.Atemp / house.tvvSrc.factor;
+}
+
 //============================
 //=EPpet Calculation===========
 //============================
@@ -169,9 +217,9 @@ function EPpet(house) {
   const Atemp = house.Atemp;
 
   for (let i = 0; i < EType.E_TYPE_COUNT; i++) {
-    const heat = house.E.heat[i];
-    const cool = house.E.cool[i];
-    const watr = house.E.watr[i];
+    const heat = house.E.heat[i] - house.E.heat_ren[i];
+    const cool = house.E.cool[i] - house.E.cool_ren[i];
+    const watr = house.E.watr[i] - house.E.watr_ren[i];
     const fast = house.E.fast[i];
     total += ((heat / F_geo) + cool + watr + fast) * (E_wght[i] / Atemp);
   }
@@ -252,6 +300,9 @@ function printHouse(house) {
   console.log(`House type: ${HouseType_name[house.type]}`);
   console.log(`Atemp: ${house.Atemp} m²`);
   console.log(`Location: ${house.L.name} (F_geo = ${house.L.F_geo.toFixed(2)})`);
+  console.log(`Rooms: ${house.Rooms}`);
+  console.log(`Household energy: ${house.HouseHoldEnergy.toFixed(1)}`);
+  console.log(`U_roof: ${house.uval.U_roof.toFixed(2)}`);
   console.log(`Flow (q): ${house.flow.toFixed(2)}   qavg (q_medel): ${house.qavg.toFixed(2)}`);
   console.log(`Foot2: ${house.foot2 ? "Yes" : "No"}   Foot3: ${house.foot3 ? "Yes" : "No"}   Foot4: ${house.foot4 ? "Yes" : "No"}   Foot5: ${house.foot5 ? "Yes" : "No"}`);
   console.log("Energy use:");
@@ -269,23 +320,27 @@ function printHouse(house) {
   console.log(`Limits → EP: ${lim.EP.toFixed(1)}, EL: ${lim.EL.toFixed(1)}, UM: ${lim.UM.toFixed(2)}, LL: ${lim.LL.toFixed(2)}`);
 }
 
-//============================
-//=Main (example)=============
-//============================
-(function main() {
-  // Create a House (Åland, SMALL, Atemp = 100)
-
-	/*
-  // Example inputs:
-  const h = new House(HouseType.SMALL, 100, locations[1]);
-  h.E.heat[EType.ELECTRIC]   = 120.0;
-  h.E.cool[EType.FJARRKYLA]  = 40.0;
-  h.flow     = 0.5;    // example instantaneous airflow (q)
-  h.qavg     = 0.4;    // example average airflow (q_medel)
-  h.foot2    = true;   // footnote‐2 applies (LOCAL)
-  h.foot3    = true;   // footnote‐3 applies (LOCAL)
-  h.foot4    = true;   // footnote‐4 applies (MULTI)
-  h.foot5    = true;   // footnote‐5 applies (MULTI)
-
-  printHouse(h);*/
-})();
+// Export for Node.js testing
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    EType,
+    E_wght,
+    E_name,
+    Location,
+    locations,
+    HouseType,
+    HouseType_name,
+    Energy,
+    House,
+    LimitVals,
+    elBase,
+    el1,
+    ep2,
+    el3,
+    ep4,
+    el5,
+    EPpet,
+    limit,
+    printHouse
+  };
+}

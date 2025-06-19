@@ -3,6 +3,9 @@
 
 Calculates EPpet, in accordance with   Landskapsförordning (2015:5) om Ålands byggbestämmelsesamling
 
+Demo hosted at: [https://madlumi.github.io/ecal/energy.html](https://madlumi.github.io/ecal/energy.html). (This site is updated manually and may lag behind the latest commits.)
+
+
 ---
 
 ## Usage
@@ -21,21 +24,24 @@ just serve the files in your preferred way, all the logic happens client side
 ---
 
 
-## issues
+## TODO
 
 Flerbostadshus, lokal, fotnoter bör dubbelkollas.
-ep limit för class A-G bör dubbelkollas
+ep limit för class A-G bör dubbelkollas(found the source 2014:31) 
 
+should make pdf output mimic official doc
 css could use some work
+
+
 
 
 ## Help-icon logic
 
-For any key `x`, a “?” help icon will be shown **if and only if** all of the following are true:
-
-1. There is an element in the DOM with `id="x_help_icon"`.  
-2. There is a matching help container with `id="x_help"`.  
-3. `STRINGS` in  `strings.js` has a non blank entry with `x_help`
+For any key `x` where `strings.js` defines a non-empty `x_help` entry, the
+interface will automatically generate a “?” icon and a matching help box. If the
+elements `x_help_icon` or `x_help` do not already exist in the DOM they will be
+created next to the label (or the element itself) and wired to show the help
+text on click.
 
 
 
@@ -43,11 +49,6 @@ For any key `x`, a “?” help icon will be shown **if and only if** all of the
 ---
 
 
-## Development and Testing
-
-Run the automated tests by opening `tests.html` in a browser.
-
----
 ## File Structure
 
 | Filename           | Description                                                    |
@@ -59,7 +60,14 @@ Run the automated tests by opening `tests.html` in a browser.
 | `strings.js`       | User facing strings and translations           |
 | `style.css`        |     css                                                             |
 | `dev/`      | marginally useful files for developement|
-| `tests.html`      |  test file(not very good) |
+
+## Legal Sources
+
+Legal references used in the app are stored in the `sources/` directory:
+
+- `201431.txt` – Landskapslag (2014:31) om energideklaration för byggnader
+- `202511.txt` – Landskapsförordning (2025:11) om fastställande av byggnadens energianvändning
+- `ventilation_guidance.txt` – Anteckningar om ventilationsanvisningar
 
 
 ---
@@ -68,8 +76,14 @@ Run the automated tests by opening `tests.html` in a browser.
 
 ### Main Interface
 
-![Screenshot of the website](screenshot.png)
+![Screenshot showing the energy calculator's main interface](screenshot.png)
 
 ### Printed Certificate PDF
 
-![Screenshot of the print output](screenshot_output.png)
+![Screenshot showing a generated energy certificate PDF](screenshot_output.png)
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENCE.txt).

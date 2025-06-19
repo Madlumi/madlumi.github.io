@@ -48,13 +48,95 @@ const STRINGS = {
 		en: "House Type:",
 		fi: "Talotyyppi:"
 	},
-	housetype_help: {
-		sv: "",
-		en: "",
-		fi: ""
-	},
+        housetype_help: {
+                sv: "",
+                en: "",
+                fi: ""
+        },
 
-	// Footnotes heading + labels
+        // Input section headings
+        section_basic_heading: {
+                sv: "Grunduppgifter",
+                en: "Basic Info",
+                fi: "Perustiedot"
+        },
+        section_tvv_heading: {
+                sv: "Tappvarmvatten",
+                en: "Hot Water",
+                fi: "Lämmin vesi"
+        },
+        section_energy_heading: {
+                sv: "Energifaktorer",
+                en: "Energy Factors",
+                fi: "Energiatekijät"
+        },
+
+        section_energyinput_heading: {
+                sv: "Energiinmatning",
+                en: "Energy Input",
+                fi: "Energian syöttö"
+        },
+        heatEnergy_label: {
+                sv: "Värmeenergi (kWh):",
+                en: "Heating energy:",
+                fi: "Lämmitysenergia:"
+        },
+        heatEnergyType_label: {
+                sv: "Typ:",
+                en: "Type:",
+                fi: "Tyyppi:"
+        },
+        coolEnergy_label: {
+                sv: "Kylenergi (kWh):",
+                en: "Cooling energy:",
+                fi: "Jäähdytysenergia:"
+        },
+        fastEnergy_label: {
+                sv: "Fastighetsenergi (kWh):",
+                en: "Facility energy:",
+                fi: "Kiinteistöenergia:"
+        },
+        section_deductions_heading: {
+                sv: "Avdrag",
+                en: "Deductions",
+                fi: "Vähennykset"
+        },
+        dedPersons_label: {
+                sv: "Personer:",
+                en: "People:",
+                fi: "Henkilöt:"
+        },
+        dedPersons_help: {
+                sv: "Tabell 6:3 – Värden för beräkning av antal personer i bostäder<br><table><tr><th>Antal rum och kök</th><td>1<sup>1</sup></td><td>2</td><td>3</td><td>4</td><td>5+</td></tr><tr><th>Antal personer</th><td>1,42</td><td>1,63</td><td>2,18</td><td>2,79</td><td>3,51</td></tr></table><p><sup>1</sup> Inklusive 1 rum och kokvrå</p>",
+                en: "Table 6:3 – Values for calculating number of persons in dwellings<br><table><tr><th>Rooms + kitchen</th><td>1<sup>1</sup></td><td>2</td><td>3</td><td>4</td><td>5+</td></tr><tr><th>People</th><td>1.42</td><td>1.63</td><td>2.18</td><td>2.79</td><td>3.51</td></tr></table><p><sup>1</sup> Includes 1 room with kitchenette</p>",
+                fi: "Taulukko 6:3 – Arvot henkilömäärän laskentaan asunnoissa<br><table><tr><th>Huoneet ja keittiö</th><td>1<sup>1</sup></td><td>2</td><td>3</td><td>4</td><td>5+</td></tr><tr><th>Henkilöt</th><td>1,42</td><td>1,63</td><td>2,18</td><td>2,79</td><td>3,51</td></tr></table><p><sup>1</sup> Sisältää 1 huoneen ja keittokomeron</p>"
+        },
+        dedPersonHeat_label: {
+                sv: "Personvärme (W):",
+                en: "Person heat (W):",
+                fi: "Henkilölämpö (W):"
+        },
+        dedTime_label: {
+                sv: "Tid (h/d/v):",
+                en: "Time (h/d/w):",
+                fi: "Aika (h/p/v):"
+        },
+        dedTime_hours_unit: {
+                sv: "h/d",
+                en: "h/d",
+                fi: "h/p"
+        },
+        dedTime_days_unit: {
+                sv: "d/v",
+                en: "d/w",
+                fi: "p/v"
+        },
+        dedTime_weeks_unit: {
+                sv: "v/år",
+                en: "w/yr",
+                fi: "v/v"
+        },
+        // Footnotes heading + labels
 	footnotes_heading: {
 		sv: "Extra ventilationsfotnoter (endast flerbostadshus):",
 		en: "Extra ventilation footnotes (only multi‐family):",
@@ -128,11 +210,27 @@ const STRINGS = {
 		en: "Atemp (m²):",
 		fi: "Atemp (m²):"
 	},
-	atemp_help: {
-		sv: "Arean av samtliga våningsplan, vindsplan och källarplan för temperaturreglerade utrymmen, avsedda att värmas till mer än 10 °C, som begränsas av klimatskärmens insida. Area som upptas av innerväggar, öppningar för trappa, schakt och dylikt inräknas. Area för garage inräknas inte.",
-		en: "The area of all floors, attic, and basement for temperature‐controlled spaces intended to be heated above 10 °C, bounded by the interior of the building envelope. Area occupied by interior walls, stair openings, shafts, etc., is included; garage area (inside the building) is not counted.",
-		fi: "Lämpötilasäädeltyjen tilojen pinta‐ala, mukaan lukien kaikki kerrokset, yläkerrat ja kellarit, jotka on tarkoitus lämmittää yli 10 °C, sisäisen rakennuskuoren sisällä. Sisäseinien, portaiden, hormien jne. pinta‐ala sisältyy; autotallin pinta‐alaa ei lasketa."
-	},
+        atemp_help: {
+                sv: "Arean av samtliga våningsplan, vindsplan och källarplan för temperaturreglerade utrymmen, avsedda att värmas till mer än 10 °C, som begränsas av klimatskärmens insida. Area som upptas av innerväggar, öppningar för trappa, schakt och dylikt inräknas. Area för garage inräknas inte.",
+                en: "The area of all floors, attic, and basement for temperature‐controlled spaces intended to be heated above 10 °C, bounded by the interior of the building envelope. Area occupied by interior walls, stair openings, shafts, etc., is included; garage area (inside the building) is not counted.",
+                fi: "Lämpötilasäädeltyjen tilojen pinta‐ala, mukaan lukien kaikki kerrokset, yläkerrat ja kellarit, jotka on tarkoitus lämmittää yli 10 °C, sisäisen rakennuskuoren sisällä. Sisäseinien, portaiden, hormien jne. pinta‐ala sisältyy; autotallin pinta‐alaa ei lasketa."
+        },
+        rooms_label: {
+                sv: "Rum + kök:",
+                en: "Rooms + kitchen:",
+                fi: "Huoneet + keittiö:"
+        },
+        
+        tvvType_label: {
+                sv: "Tappvarmvattenkälla:",
+                en: "Hot water source:",
+                fi: "Lämminvesilähde:"
+        },
+        tvvType_help: {
+                sv: "",
+                en: "",
+                fi: ""
+        },
 
 	// Permalink
 	permalink_label: {
@@ -260,11 +358,37 @@ const STRINGS = {
 	},
 
 	// “?” icon character
-	info_icon: {
-		sv: "?",
-		en: "?",
-		fi: "?"
-	},
+        info_icon: {
+                sv: "?",
+                en: "?",
+                fi: "?"
+        },
+
+        calc_icon: {
+                sv: "\uD83E\uDDEE", // calculator emoji
+                en: "\uD83E\uDDEE",
+                fi: "\uD83E\uDDEE"
+        },
+        pen_icon: {
+                sv: "\u270E", // pencil
+                en: "\u270E",
+                fi: "\u270E"
+        },
+        calc_tooltip: {
+                sv: "Använd beräknat värde",
+                en: "Use calculated value",
+                fi: "Käytä laskettua arvoa"
+        },
+        pen_tooltip: {
+                sv: "Skriv in manuellt",
+                en: "Enter manually",
+                fi: "Syötä käsin"
+        },
+        calc_help: {
+                sv: "Markerad: använd beräknade eller förinställda värden.<br>Avmarkerad: ange manuellt",
+                en: "Checked: use calculated or preset values.<br>Unchecked: enter values manually",
+                fi: "Valittuna: käytä laskettuja tai esiasetettuja arvoja.<br>Ei valittuna: syötä arvot käsin"
+        },
 
 
 

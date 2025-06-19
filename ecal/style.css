@@ -17,12 +17,14 @@ body {
 
 /* Language selector at top right */
 #langSelector {
+
   text-align: right;
   margin-bottom: 0.5rem;
 }
 .lang-button {
   background: none;
   border: none;
+
   font-size: 1.5rem;
   cursor: pointer;
   margin-left: 0.25rem;
@@ -89,16 +91,39 @@ form#houseForm table td {
   max-width: 4rem;
 }
 
+/* Let tables within the form use natural width for their last column
+   unless specifically overridden */
+form#houseForm table th:last-child,
+form#houseForm table td:last-child {
+  width: auto;
+  max-width: none;
+}
+
+
 form#houseForm th {
   background: #f0f0f0;
 }
 
 form#houseForm input[type="number"],
 form#houseForm select {
-  width: calc(100% - 0.25rem);
+  width: 100%;
   padding: 0.15rem;
   font-size: 0.9rem;
   box-sizing: border-box;
+}
+
+/* Collapsible input subsections */
+details.input-section {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--form-bg);
+}
+
+details.input-section summary {
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
 }
 
 /* “Energyfaktorer (kW/år):” label */
@@ -154,6 +179,31 @@ textarea#permalink {
   font-size: 1.2rem;
   vertical-align: middle;
   cursor: default;
+}
+
+.time-unit {
+  margin-right: 0.5rem;
+}
+
+.ded-pair {
+  white-space: nowrap;
+}
+
+
+
+.lock-icon {
+  margin-left: 0;
+  cursor: pointer;
+}
+
+.value-box input.locked {
+  background: #eee;
+  color: #666;
+}
+
+.value-box {
+  display: inline-flex;
+  align-items: center;
 }
 
 button.clear-btn,
@@ -247,6 +297,13 @@ button:hover {
   padding: 0.4rem;
 }
 
+/* Tables inside help text should size to content */
+.help-box table {
+  width: auto;
+  table-layout: auto;
+  margin-top: 0.25rem;
+}
+
 table {
   background: var(--table-bg);
   border-collapse: collapse;
@@ -256,6 +313,35 @@ table {
 th, td {
   border: 1px solid var(--table-border);
   padding: 0.3rem;
+}
+
+/* Ensure label and calc columns have room for icons */
+#energyTable th:first-child,
+#energyTable td:first-child {
+  min-width: 6rem;
+}
+
+#energyTable th:last-child,
+#energyTable td:last-child {
+  width: 3.5rem;
+}
+
+/* Energy input table without borders */
+#energyInputTable {
+  border-collapse: collapse;
+  width: auto;
+}
+#energyInputTable td {
+  border: none;
+  padding: 0.25rem 0.5rem 0.25rem 0;
+}
+
+/* The input table shouldn't inherit the narrow last column used by
+   #energyTable, so reset the width limitations */
+#energyInputTable th:last-child,
+#energyInputTable td:last-child {
+  width: auto;
+  max-width: none;
 }
 
 th {
@@ -275,6 +361,7 @@ button,
 .lang-button {
   background: ButtonFace;
   color: ButtonText;
+
   border: 1px solid ButtonText;
   forced-color-adjust: none;
 }
@@ -286,9 +373,35 @@ button:focus,
 }
 
 @media (forced-colors: none) {
-  button:hover,
+button:hover,
   .lang-button:hover {
     background: var(--header-bg);
     color: var(--hover-text);
   }
+}
+
+/* EP class arrow displayed next to the EPpet value */
+#ep_arrow {
+  float: right;
+}
+
+.ep-arrow {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding-left: 0.5em;
+  font-weight: bold;
+  color: white;
+  position: relative;
+}
+
+.ep-arrow .triangle {
+  position: absolute;
+  left: -29px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 30px solid transparent;
 }
