@@ -525,9 +525,6 @@ button:hover,
   .ep-arrow {
     border: 1px solid CanvasText;
   }
-  .ep-arrow .triangle {
-    display: none;
-  }
 }
 
 .ep-arrow .triangle {

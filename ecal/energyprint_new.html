@@ -1,7 +1,10 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Copyright (C) 2025 Edvin svenblad -->
 <!DOCTYPE html>
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Energideklaration – Print Layout (Bleed!)</title>
   <link rel="stylesheet" href="style.css" media="screen" />
   <style>
@@ -12,12 +15,38 @@
       #printArea { display: none; }
 
       /* Two-column layout */
-      #screenUI { display: flex; gap: 1rem; padding: 1rem; }
-      #dataEntry { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+      #screenUI {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        width: 100%;
+        max-width: 50rem;
+        margin-inline: auto;
+        box-sizing: border-box;
+        min-width: 0;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      #dataEntry {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 32rem;
+        box-sizing: border-box;
+        min-width: 0;
+      }
+      html,
+      body {
+        margin: 0;
+        overflow-x: hidden;
+      }
 
       :root { --preview-scale: 0.42; }
       #previewContainer {
         flex: none;
+        max-width: 100%;
         width: calc(148.5mm * var(--preview-scale));
         height: calc(210mm * var(--preview-scale));
         box-sizing: content-box;
@@ -43,18 +72,71 @@
         margin-bottom: 0.5rem;
         background: var(--form-bg);
         display: grid;
-        grid-template-columns: max-content 1fr;
+        grid-template-columns: auto minmax(40%, 1fr);
         column-gap: 0.5rem;
         row-gap: 0.5rem;
         align-items: center;
+        box-sizing: border-box;
       }
-      .input-section label { margin: 0; }
-      .input-section input { width: 100%; }
+      .input-section label {
+        margin: 0;
+        min-width: 0;
+        max-width: 60%;
+        white-space: normal;
+        word-break: break-word;
+      }
+      .input-section input {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        margin: 0;
+      }
 
       /* Print button */
-      #printButton { padding: 1rem; font-size: 1.1rem; background: #3a8f4e; color: #fff; border: none; cursor: pointer; }
+      #printButton {
+        padding: 1rem;
+        font-size: 1.1rem;
+        background: #3a8f4e;
+        color: #fff;
+        border: 1px solid transparent;
+        cursor: pointer;
+        forced-color-adjust: auto;
+      }
       #printButton:hover { background: #287f53; }
 
+    }
+
+    @media screen and (max-width: 30rem) {
+      .input-section {
+        grid-template-columns: 1fr;
+        max-width: 90%;
+        margin-inline: auto;
+      }
+      .input-section label {
+        white-space: normal;
+        word-break: break-word;
+      }
+      .input-section input {
+        width: 100%;
+      }
+      #dataEntry {
+        max-width: 100%;
+      }
+      #screenUI {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      #printButton {
+        width: 80%;
+        margin-inline: auto;
+      }
+      #previewContainer {
+        margin-inline: auto;
+        /* Keep the preview's original aspect ratio */
+        max-width: 100%;
+      }
     }
 
     /* Print-only styles */
@@ -67,10 +149,13 @@
         padding: 0;
         font-family: Arial, sans-serif;
         font-size: 10pt;
+        background: #fff;
         -webkit-print-color-adjust: exact;
         color-adjust: exact;
+        forced-color-adjust: none;
       }
-      #printArea { display: block; }
+      #printArea { display: block; forced-color-adjust: none; }
+      #printArea * { forced-color-adjust: none; }
       .container { border: none !important; page-break-inside: avoid; }
       .classes-box { border: 1px solid #000 !important; }
     }
@@ -91,32 +176,32 @@
   <div id="screenUI">
     <div id="dataEntry">
       <div class="input-section">
-        <label for="addressInput">Byggnadens adress:</label>
-        <input type="text" id="addressInput" placeholder="Oceangränd 1 B2">
-        <label for="municipalityInput">Kommun:</label>
-        <input type="text" id="municipalityInput" placeholder="Jomala kommun">
-        <label for="yearInput">Nybyggnadsår:</label>
-        <input type="text" id="yearInput" placeholder="t.ex. 2009">
-        <label for="idInput">Energideklarations-ID:</label>
-        <input type="text" id="idInput" placeholder="t.ex. 3671">
-        <label for="energyInput">Energiprestanda, primärenergital:</label>
-        <input type="text" id="energyInput" placeholder="t.ex. 162"> 
-        <label for="requirementInput">Krav vid uppförande av<br> ny byggnad, primärenergital:</label>
-        <input type="text" id="requirementInput" placeholder="100 kWh/m² och år">
-        <label for="heatingInput">Uppvärmningssystem:</label>
-        <input type="text" id="heatingInput" placeholder="Värmepump-luft/luft (el) och el">
-        <label for="radonInput">Radonmätning:</label>
-        <input type="text" id="radonInput" placeholder="Inte utförd">
-        <label for="ovkInput">Ventilationskontroll (OVK):</label>
-        <input type="text" id="ovkInput" placeholder="Utförd">
-        <label for="suggestionsInput">Åtgärdsförslag:</label>
-        <input type="text" id="suggestionsInput" placeholder="Har lämnats">
-        <label for="performedInput">Energideklarationen är utförd av:</label>
-        <input type="text" id="performedInput" placeholder="Namn Efternamn, LL, 2025-05-27">
-        <label for="validInput">Energideklarationen är giltig till:</label>
-        <input type="text" id="validInput" placeholder="2035-05-27">
+        <label id="lbl_p_address" for="addressInput"></label>
+        <input type="text" id="addressInput">
+        <label id="lbl_p_municipality" for="municipalityInput"></label>
+        <input type="text" id="municipalityInput">
+        <label id="lbl_p_year" for="yearInput"></label>
+        <input type="text" id="yearInput">
+        <label id="lbl_p_id" for="idInput"></label>
+        <input type="text" id="idInput">
+        <label id="lbl_p_energy" for="energyInput"></label>
+        <input type="text" id="energyInput">
+        <label id="lbl_p_requirement" for="requirementInput"></label>
+        <input type="text" id="requirementInput">
+        <label id="lbl_p_heating" for="heatingInput"></label>
+        <input type="text" id="heatingInput">
+        <label id="lbl_p_radon" for="radonInput"></label>
+        <input type="text" id="radonInput">
+        <label id="lbl_p_ovk" for="ovkInput"></label>
+        <input type="text" id="ovkInput">
+        <label id="lbl_p_suggestions" for="suggestionsInput"></label>
+        <input type="text" id="suggestionsInput">
+        <label id="lbl_p_performed" for="performedInput"></label>
+        <input type="text" id="performedInput">
+        <label id="lbl_p_valid" for="validInput"></label>
+        <input type="text" id="validInput">
       </div>
-      <button id="printButton" onclick="window.print()">Skriv ut</button>
+      <button id="printButton" onclick="window.print()"></button>
     </div>
     <div id="previewContainer"><div id="previewContent"></div></div>
   </div>
@@ -125,8 +210,8 @@
   <div id="printArea">
     <div style="height:10mm;"></div>
     <div style="position:fixed; top:10mm; left:0; width:148.5mm; height:15mm; background:#000;">
-      <div class="font-helvetica" style="position:absolute; top:0; left:15mm; font-size:10pt; color:#fff;">sammanfattning av</div>
-      <div class="font-helvetica-bold" style="position:absolute; top:4mm; left:15mm; font-size:30pt; color:#fff;">ENERGIDEKLARATION</div>
+      <div id="summary_prefix" class="font-helvetica" style="position:absolute; top:0; left:15mm; font-size:10pt; color:#fff;"></div>
+      <div id="summary_title" class="font-helvetica-bold" style="position:absolute; top:4mm; left:15mm; font-size:30pt; color:#fff;"></div>
     </div>
 
     <div class="container" style="left:8mm; top:29.5mm; width:73mm; height:12.5mm; font-size:13pt;">
@@ -134,80 +219,216 @@
       <div class="print-line"><span id="municipalityDisplay" class="font-helvetica"></span></div>
     </div>
     <div class="container" style="left:8mm; top:42.5mm; width:73mm; height:13.5mm; font-size:10pt;">
-      <div class="print-line"><span class="font-arial-bold">Nybyggnadsår:</span> <span id="yearDisplay" class="font-arial"></span></div>
-      <div class="print-line"><span class="font-helvetica-bold">Energideklarations-ID:</span> <span id="idDisplay" class="font-helvetica"></span></div>
+      <div class="print-line"><span id="p_year_label" class="font-arial-bold"></span> <span id="yearDisplay" class="font-arial"></span></div>
+      <div class="print-line"><span id="p_id_label" class="font-helvetica-bold"></span> <span id="idDisplay" class="font-helvetica"></span></div>
     </div>
 
     <div class="container classes-box" style="left:8mm; top:56mm; width:73mm; height:90mm; overflow:hidden;">
-      <div class="font-helvetica-bold" style="font-size:11pt; padding:4px;">ENERGIKLASSER</div>
-      <svg id="energyClasses" width="100%" height="calc(100% - 10mm)" viewBox="0 0 73 90" preserveAspectRatio="xMinYMin meet"></svg>
+      <div id="p_classes_heading" class="font-helvetica-bold" style="font-size:11pt; padding:4px;"></div>
+      <svg id="energyClasses" width="100%" height="calc(100% - 10mm)" viewBox="0 0 73 90" preserveAspectRatio="xMinYMin meet">
+        <title id="energyClassesTitle"></title>
+      </svg>
     </div>
 
     <div class="container" style="left:8mm; top:164mm; width:73mm; height:15.5mm; font-size:10pt;">
-      <span class="font-helvetica-bold">Energideklarationen i sin helhet</span><br>
-      <span class="font-arial-bold">finns hos byggnadens ägare.</span>
+      <span id="p_full_declaration" class="font-helvetica-bold"></span><br>
+      <span id="p_kept_by_owner" class="font-arial-bold"></span>
     </div>
     <div class="container" style="left:8mm; top:179.5mm; width:73mm; height:10.5mm; font-size:10pt;">
-      <span class="font-arial-bold">För mer information:</span><br>
-      <span class="font-helvetica">www.regeringen.ax</span>
+      <span id="p_more_info" class="font-arial-bold"></span><br>
+      <span id="p_info_site" class="font-helvetica"></span>
     </div>
     <div class="container" style="left:8mm; top:190.5mm; width:73mm; height:9.5mm; font-size:10pt;">
-      <span class="font-arial">Sammanfattningen är upprättad enligt Ålands landskapslag (2014:31) om energideklaration för byggnader.</span>
+      <span id="p_summary_law" class="font-arial"></span>
     </div>
 
     <div class="container" style="left:87.5mm; top:56mm; width:calc(26.5mm - 1.5px); height:26.5mm; overflow:hidden;">
       <svg id="houseSvg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;" preserveAspectRatio="xMinYMin meet">
+        <title id="houseSvgTitle"></title>
         <polygon id="houseRoof" stroke="none" />
         <polygon id="houseBody" stroke="none" />
       </svg>
     </div>
     <div class="container" style="left:86mm; top:83.5mm; width:28mm; height:7.5mm; font-size:8pt;">
-      <div class="font-arial" style="text-align:center;">DENNA BYGGNADS ENERGIKLASS</div>
+      <div id="p_building_class" class="font-arial" style="text-align:center;"></div>
     </div>
 
     <div class="container" style="left:86mm; top:100mm; width:56.5mm; height:110mm; font-size:10pt;">
-      <div class="print-line" style="white-space:nowrap;"><strong>Energiprestanda, primärenergital:</strong></div>
-      <div class="print-line"><span id="energyDisplay"></span> kWh/m² och år</div>
-      <div class="print-line"><strong>Krav vid uppförande av<br> ny byggnad, primärenergital:</strong></div>
+      <div class="print-line" style="white-space:nowrap;"><strong id="p_energy_label"></strong></div>
+      <div class="print-line"><span id="energyDisplay"></span> <span id="p_energy_unit"></span></div>
+      <div class="print-line"><strong id="p_requirement_label"></strong></div>
       <div class="print-line"><span id="requirementDisplay"></span></div>
-      <div class="print-line"><strong>Uppvärmningssystem:</strong></div>
+      <div class="print-line"><strong id="p_heating_label"></strong></div>
       <div class="print-line"><span id="heatingDisplay"></span></div>
-      <div class="print-line"><strong>Radonmätning:</strong></div>
+      <div class="print-line"><strong id="p_radon_label"></strong></div>
       <div class="print-line"><span id="radonDisplay"></span></div>
-      <div class="print-line"><strong>Ventilationskontroll (OVK):</strong></div>
+      <div class="print-line"><strong id="p_ovk_label"></strong></div>
       <div class="print-line"><span id="ovkDisplay"></span></div>
-      <div class="print-line"><strong>Åtgärdsförslag:</strong></div>
+      <div class="print-line"><strong id="p_suggestions_label"></strong></div>
       <div class="print-line"><span id="suggestionsDisplay"></span></div>
-      <div class="print-line"><strong>Energideklarationen är utförd av:</strong></div>
+      <div class="print-line"><strong id="p_performed_label"></strong></div>
       <div class="print-line"><span id="performedDisplay"></span></div>
-      <div class="print-line"><strong>Energideklarationen är giltig till:</strong></div>
+      <div class="print-line"><strong id="p_valid_label"></strong></div>
       <div class="print-line"><span id="validDisplay"></span></div>
     </div>
   </div>
 
-  <script src="epclass.js"></script>
+  <script src="config.js"></script>
+  <script src="strings.js"></script>
+  <script src="localization.js"></script>
+  <script src="util.js"></script>
+  <script src="glue.js"></script>
   <script>
+
+    function applyPrintUiStrings() {
+      document.documentElement.lang = window.SELECTED_LANG;
+      const labels = {
+        lbl_p_address: 'address_label',
+        lbl_p_municipality: 'municipality_label',
+        lbl_p_year: 'year_label',
+        lbl_p_id: 'id_label',
+        lbl_p_energy: 'energy_label',
+        lbl_p_requirement: 'requirement_label',
+        lbl_p_heating: 'heating_label',
+        lbl_p_radon: 'radon_label',
+        lbl_p_ovk: 'ovk_label',
+        lbl_p_suggestions: 'suggestions_label',
+        lbl_p_performed: 'performed_label',
+        lbl_p_valid: 'valid_label'
+      };
+      for (const [id,key] of Object.entries(labels)) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = getPrintUiString(key);
+      }
+
+      const placeholders = {
+        addressInput: 'address_placeholder',
+        municipalityInput: 'municipality_placeholder',
+        yearInput: 'year_placeholder',
+        idInput: 'id_placeholder',
+        energyInput: 'energy_placeholder',
+        requirementInput: 'requirement_placeholder',
+        heatingInput: 'heating_placeholder',
+        radonInput: 'radon_placeholder',
+        ovkInput: 'ovk_placeholder',
+        suggestionsInput: 'suggestions_placeholder',
+        performedInput: 'performed_placeholder',
+        validInput: 'valid_placeholder'
+      };
+      for (const [id,key] of Object.entries(placeholders)) {
+        const inp = document.getElementById(id);
+        if (inp) inp.placeholder = getPrintUiString(key);
+      }
+
+      const btn = document.getElementById('printButton');
+      if (btn) btn.textContent = getPrintUiString('print_button');
+    }
+
+    function applyPrintStrings() {
+      const map = {
+        summary_prefix: 'summary_of',
+        summary_title: 'title',
+        p_year_label: 'year_label',
+        p_id_label: 'id_label',
+        p_classes_heading: 'classes_heading',
+        p_full_declaration: 'full_declaration',
+        p_kept_by_owner: 'kept_by_owner',
+        p_more_info: 'more_info',
+        p_info_site: 'info_site',
+        p_summary_law: 'summary_law',
+        p_building_class: 'building_class',
+        p_energy_label: 'energy_label',
+        p_energy_unit: 'energy_unit',
+        p_requirement_label: 'requirement_label',
+        p_heating_label: 'heating_label',
+        p_radon_label: 'radon_label',
+        p_ovk_label: 'ovk_label',
+        p_suggestions_label: 'suggestions_label',
+        p_performed_label: 'performed_label',
+        p_valid_label: 'valid_label'
+      };
+      for (const [id,key] of Object.entries(map)) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = getPrintString(key);
+      }
+    }
+
+    function generateName(address, id) {
+      // Normalize to NFD so diacritics become separate codepoints and then
+      // strip them (\u0300-\u036f matches combining marks). We also map
+      // common Å, Ä, Ö characters to plain a/o for local audience.
+      const translit = str =>
+        str.normalize('NFD')
+           .replace(/[\u0300-\u036f]/g, '')
+           .replace(/[åäÅÄ]/g, 'a')
+           .replace(/[öÖ]/g, 'o');
+
+      const sanitize = str =>
+        translit(str)
+          .replace(/\s+/g, '_')
+          .replace(/[^0-9A-Za-z_-]/g, '');
+
+      const safeId = sanitize(String(id || ''));
+      let safeAddr = sanitize(String(address || '')); 
+      if (safeAddr.length > CONFIG.PRINTING.NAME_LIMITS.ADDRESS) {
+        safeAddr = safeAddr.slice(0, CONFIG.PRINTING.NAME_LIMITS.ADDRESS);
+      }
+
+      let base = `energideklaration-${safeId}-${safeAddr}`;
+      if (base.length + 4 > CONFIG.PRINTING.NAME_LIMITS.FILENAME) {
+        const excess = base.length + 4 - CONFIG.PRINTING.NAME_LIMITS.FILENAME;
+        base = base.slice(0, base.length - excess);
+      }
+      return base + '.pdf';
+    }
+
+    function updateFileName() {
+      const address = document.getElementById('addressInput').value;
+      const id = document.getElementById('idInput').value;
+      const name = generateName(address, id);
+      document.title = name;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      detectLang();
+      applyPrintUiStrings();
+      applyPrintStrings();
+      const tEnergy = document.getElementById('energyClassesTitle');
+      if (tEnergy) tEnergy.textContent = getPrintString('classes_svg_title');
+      const tHouse = document.getElementById('houseSvgTitle');
+      if (tHouse) tHouse.textContent = getPrintString('house_svg_title');
+
       const labels = Object.keys(window.EPClass.data);
       const colors = labels.map(l => window.EPClass.data[l].colour);
+      let noReq = false;
+      const base = CONFIG.PRINTING.CLASS_LAYOUT;
       const config = {
         labels,
         colors,
         highlightIdx: 0,
-        container: { width:73, height:90 },
-        margins: { top:10, bottom:5, gap:3 },
-        arrow: { minNorm:0.2, maxNorm:0.9, fontSize:5 },
-        letterOffset: { x:-4, y:0.5 },
-        outline: { black:2.5, white:1 },
-        house: { roofThickness:9, roofGap:6, fontSize:50, letterOffset: { x:0, y:20 } }
+        container: base.container,
+        margins: base.margins,
+        arrow: base.arrow,
+        letterOffset: base.letterOffset,
+        outline: base.outline,
+        house: base.house
       };
       // Bind inputs to displays
       const bind = (inputId, displayId) => {
         const inp = document.getElementById(inputId);
         const disp = document.getElementById(displayId);
-        const handler = () => { disp.textContent = inp.value; updateAll(); };
+        const setDisp = () => {
+          let val = inp.value;
+          if (CONFIG.FEATURES.NOREQ_NACLASS && inputId === 'requirementInput' &&
+              parseFloat(val) >= CONFIG.CONSTANTS.NOREQ_VALUE) {
+            disp.textContent = getString('na_label');
+          } else {
+            disp.textContent = val;
+          }
+        };
+        const handler = () => { setDisp(); updateAll(); };
         inp.addEventListener('input', handler);
-        disp.textContent = inp.value;
+        setDisp();
       };
       ['addressInput','municipalityInput','yearInput','idInput',
        'energyInput','requirementInput','heatingInput','radonInput',
@@ -232,9 +453,25 @@
         valid: 'validInput'
       };
       for (const [p, id] of Object.entries(paramMap)) {
+        const inp = document.getElementById(id);
         const val = params.get(p);
-        if (val !== null) {
-          document.getElementById(id).value = val;
+        if (inp && val !== null) {
+          inp.value = val;
+          inp.dispatchEvent(new Event('input'));
+        }
+      }
+
+      const typeMap = {
+        SMALL: 'option_housetype_SMALL',
+        MULTI: 'option_housetype_MULTI',
+        LOCAL: 'option_housetype_LOCAL'
+      };
+      const typeParam = (params.get('housetype') || '').toUpperCase();
+      const typeKey = typeMap[typeParam];
+      if (typeKey) {
+        const clsHead = document.getElementById('p_classes_heading');
+        if (clsHead) {
+          clsHead.textContent += ' – ' + getString(typeKey);
         }
       }
 
@@ -260,22 +497,32 @@
         const arrowH = hAvail / n;
         const tipW = arrowH * Math.sqrt(3) / 2;
 
-        roof.setAttribute('fill', config.colors[config.highlightIdx]);
-        body.setAttribute('fill', config.colors[config.highlightIdx]);
-        houseLetter.textContent = config.labels[config.highlightIdx];
-
         svg.innerHTML = '';
-        const sy = config.margins.top + config.highlightIdx * (arrowH + config.margins.gap);
-        const wSel = config.arrow.minNorm * config.container.width + config.highlightIdx * ((config.arrow.maxNorm - config.arrow.minNorm) * config.container.width / (n-1));
-        const selPts = [[0,sy],[wSel,sy],[wSel+tipW,sy+arrowH/2],[wSel,sy+arrowH],[0,sy+arrowH]].map(p=>p.join(',')).join(' ');
-        [{color:'#000',width:config.outline.black},{color:'#fff',width:config.outline.white}].forEach(o => {
-          const pElem = document.createElementNS(svg.namespaceURI,'polygon');
-          pElem.setAttribute('points', selPts);
-          pElem.setAttribute('fill','none');
-          pElem.setAttribute('stroke', o.color);
-          pElem.setAttribute('stroke-width', o.width);
-          svg.appendChild(pElem);
-        });
+        const clsTitle = document.createElementNS(svg.namespaceURI, 'title');
+        clsTitle.id = 'energyClassesTitle';
+        clsTitle.textContent = getPrintString('classes_svg_title');
+        svg.appendChild(clsTitle);
+        if (!noReq) {
+          roof.setAttribute('fill', config.colors[config.highlightIdx]);
+          body.setAttribute('fill', config.colors[config.highlightIdx]);
+          houseLetter.textContent = config.labels[config.highlightIdx];
+
+          const sy = config.margins.top + config.highlightIdx * (arrowH + config.margins.gap);
+          const wSel = config.arrow.minNorm * config.container.width + config.highlightIdx * ((config.arrow.maxNorm - config.arrow.minNorm) * config.container.width / (n-1));
+          const selPts = [[0,sy],[wSel,sy],[wSel+tipW,sy+arrowH/2],[wSel,sy+arrowH],[0,sy+arrowH]].map(p=>p.join(',')).join(' ');
+          [{color:'#000',width:config.outline.black},{color:'#fff',width:config.outline.white}].forEach(o => {
+            const pElem = document.createElementNS(svg.namespaceURI,'polygon');
+            pElem.setAttribute('points', selPts);
+            pElem.setAttribute('fill','none');
+            pElem.setAttribute('stroke', o.color);
+            pElem.setAttribute('stroke-width', o.width);
+            svg.appendChild(pElem);
+          });
+        } else {
+          roof.setAttribute('fill', '#ccc');
+          body.setAttribute('fill', '#ccc');
+          houseLetter.textContent = getString('na_label');
+        }
         config.labels.forEach((lbl, idx) => {
           const y = config.margins.top + idx * (arrowH + config.margins.gap);
           const w = config.arrow.minNorm * config.container.width + idx * ((config.arrow.maxNorm - config.arrow.minNorm) * config.container.width / (n-1));
@@ -297,9 +544,11 @@
       }
 
       function computeClass() {
+        const limRaw = parseFloat(document.getElementById('requirementInput').value);
+        noReq = CONFIG.FEATURES.NOREQ_NACLASS && !isNaN(limRaw) && limRaw >= CONFIG.CONSTANTS.NOREQ_VALUE;
+        if (noReq) return;
         const ep = parseFloat(document.getElementById('energyInput').value);
-        const lim = parseFloat(document.getElementById('requirementInput').value);
-        const cls = window.EPClass.classify(ep, lim);
+        const cls = window.EPClass.classify(ep, limRaw);
         const idx = config.labels.indexOf(cls);
         if(idx !== -1) config.highlightIdx = idx;
       }
@@ -310,6 +559,7 @@
       }
 
       function updateAll(){
+        updateFileName();
         computeClass();
         drawVisuals();
         updatePreview();
