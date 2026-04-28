@@ -1,0 +1,595 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/* Copyright (C) 2025 Edvin svenblad */
+
+:root {
+  font-size: 16px;
+  --ep-triangle-width: 30px;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+}
+
+/* Visually hidden skip link */
+.skip-link {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-link:focus {
+  position: static;
+  left: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  background: var(--form-bg);
+  border: 2px solid var(--header-bg);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.container {
+  max-width: 50rem; /* ~800px */
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+/* Language selector at top right */
+#langSelector {
+
+  text-align: right;
+  margin-bottom: 0.5rem;
+}
+.lang-button {
+  background: none;
+  border: none;
+
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 0.25rem;
+}
+
+/* Center‐justify title and subtitle */
+h1 {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+#disclaimer {
+  border: 0.06rem solid #888;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: #fdfdfd;
+  font-size: 0.9rem;
+}
+
+/* Main form and results */
+form#houseForm {
+  border: 0.06rem solid #888;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+form#houseForm label,
+form#houseForm select,
+form#houseForm input {
+  margin-right: 0.5rem;
+  margin-bottom: 0.25rem;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+/* Hide spinner arrows on number inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Energy table */
+form#houseForm table {
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  width: 100%;
+  table-layout: fixed;
+}
+
+form#houseForm table th,
+form#houseForm table td {
+  border: 0.06rem solid #ccc;
+  padding: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 4rem;
+}
+
+/* Keep narrow columns readable on small screens */
+#energyTable th,
+#energyTable td {
+  padding: 0;
+  min-width: 3.5rem;
+}
+
+/* Let tables within the form use natural width for their last column
+   unless specifically overridden */
+form#houseForm table th:last-child,
+form#houseForm table td:last-child {
+  width: auto;
+  max-width: none;
+}
+
+
+form#houseForm th {
+  background: #f0f0f0;
+}
+
+form#houseForm input[type="number"],
+form#houseForm select {
+  width: 100%;
+  padding: 0.15rem;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Remove extra spacing for inputs nested in tables */
+#energyInputTable input,
+#energyInputTable select,
+#energyTable input,
+#energyTable select {
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
+/* Keep energy type dropdowns compact on small screens */
+#energyInputTable select {
+  width: auto;
+  min-width: 6rem;
+}
+
+/* Collapsible input subsections */
+details.input-section {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--form-bg);
+}
+
+details.input-section summary {
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+/* “Energyfaktorer (kW/år):” label */
+label#energyTableLabel {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Permalink + Copy button (flex layout) */
+textarea#permalink {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: monospace;
+  font-size: 0.9rem;
+  padding: 0.25rem;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+}
+
+
+.info-icon {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.25rem;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+.info-icon:focus {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+
+@media (max-width: 30rem) { /* ~480px */
+  form#houseForm table,
+  #limitsTable {
+    display: block;
+    overflow-x: auto;
+  }
+  #epRow {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-template-areas:
+      "label value"
+      "arrow value";
+    align-items: center;
+  }
+  #epRow #ep_label {
+    grid-area: label;
+  }
+  #epRow #ep_arrow {
+    grid-area: arrow;
+    margin: 0;
+    margin-right: var(--ep-triangle-width);
+  }
+  .ep-arrow {
+    width: 100%;
+  }
+  .ep-arrow .triangle {
+    left: auto;
+    right: calc(-1 * var(--ep-triangle-width));
+    border-right: none;
+    border-left: var(--ep-triangle-width) solid transparent;
+  }
+  #epRow #ep_value {
+    grid-area: value;
+    font-size: 2.8rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.warning-icon {
+  color: red;
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+  vertical-align: middle;
+  cursor: default;
+}
+
+.time-unit {
+  margin-right: 0.5rem;
+}
+
+.ded-pair {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+
+
+.lock-icon {
+  margin-left: 0;
+  cursor: pointer;
+}
+
+.value-box input.locked {
+  background: #eee;
+  color: #666;
+}
+
+.value-box {
+  display: inline-flex;
+  align-items: center;
+}
+
+button.clear-btn,
+button.copy-btn {
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#results {
+  border: 0.06rem solid #888;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#limitsTable {
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  width: 100%;
+  table-layout: fixed;
+}
+
+#limitsTable th,
+#limitsTable td {
+  padding: 0.2rem 0.5rem;
+  border: 0.06rem solid #ccc;
+  font-size: 0.9rem;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#epRow {
+  border: 0.06rem solid #ccc;
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#epRow #ep_label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+#epRow #ep_value {
+  flex: 1;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+/*----------------------------------*/
+
+
+:root {
+  /* Color palette */
+  --page-bg:           #777777;
+  --panel-bg:          #eeeeee;
+  --border-color:      #cccccc;
+  --header-bg:         #03C04A; /* battery green */
+  --header-text:       #ffffff;
+  --form-bg:           #fafafa;
+  --hover-bg:          #003C04;
+  --help-bg:           #eef6fc;
+  --help-border:       #9999cc;
+  --table-bg:          #fafafa;
+  --table-border:      #dddddd;
+  --table-header-bg:   #f0f0f0;
+  --field-bg:          #ffffff;
+  --hover-text:        #ffffff;
+}
+
+body {
+  background: var(--page-bg);
+}
+
+.container {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  margin-top: 2rem;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+h1 {
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 0.5rem;
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+form#houseForm,
+#results {
+  background: var(--form-bg);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+button:hover {
+  background: var(--hover-bg);
+}
+
+.help-box {
+  background: var(--help-bg);
+  border: 1px solid var(--help-border);
+  padding: 0.4rem;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: none;
+  white-space: normal;
+}
+
+/* Basic style for invalid numeric inputs */
+input.invalid {
+  border-color: red;
+}
+
+/* Tables inside help text should size to content */
+.help-box table {
+  width: auto;
+  table-layout: auto;
+  margin-top: 0.25rem;
+}
+
+table {
+  background: var(--table-bg);
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid var(--table-border);
+  padding: 0.3rem;
+}
+
+/* Ensure label and calc columns have room for icons */
+#energyTable th:first-child,
+#energyTable td:first-child {
+  min-width: 5rem;
+}
+
+#energyTable th:last-child,
+#energyTable td:last-child {
+  width: 3.5rem;
+}
+
+#energyTable .value-box {
+  width: 100%;
+}
+
+/* Energy input table without borders */
+#energyInputTable {
+  border-collapse: collapse;
+  width: auto;
+}
+#energyInputTable td {
+  border: none;
+  padding: 0;
+}
+
+/* The input table shouldn't inherit the narrow last column used by
+   #energyTable, so reset the width limitations */
+#energyInputTable th:last-child,
+#energyInputTable td:last-child {
+  width: auto;
+  max-width: none;
+}
+
+th {
+  background: var(--table-header-bg);
+}
+
+textarea#permalink {
+  background: var(--field-bg);
+  border: 1px solid var(--border-color);
+}
+
+.container, form#houseForm, #results {
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+}
+
+button,
+.lang-button {
+  background: ButtonFace;
+  color: ButtonText;
+
+  border: 1px solid ButtonText;
+  /* Allow high-contrast themes to recolor buttons */
+  forced-color-adjust: auto;
+}
+
+button:focus,
+.lang-button:focus {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+
+@media (forced-colors: none) {
+button:hover,
+  .lang-button:hover {
+    background: var(--header-bg);
+    color: var(--hover-text);
+  }
+}
+
+/* EP class arrow displayed next to the EPpet value */
+#ep_arrow {
+  margin-left: var(--ep-triangle-width);
+}
+
+.ep-arrow {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding-left: 0.5em;
+  font-weight: bold;
+  color: white;
+  position: relative;
+  max-width: calc(100% - var(--ep-triangle-width));
+}
+
+@media (forced-colors: active) {
+  .ep-arrow {
+    border: 1px solid CanvasText;
+  }
+  .ep-arrow .triangle {
+    display: none;
+  }
+}
+
+.ep-arrow .triangle {
+  position: absolute;
+  left: calc(-1 * var(--ep-triangle-width));
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: var(--ep-triangle-width) solid transparent;
+}
+
+/* override arrow layout after base rules to ensure flip works */
+@media (max-width: 30rem) {
+  #epRow {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    grid-template-areas:
+      "label value"
+      "arrow value";
+    align-items: center;
+  }
+  #epRow #ep_label {
+    grid-area: label;
+  }
+  #epRow #ep_arrow {
+    /* center the arrow under the enlarged EPpet value */
+    margin-top: 1rem;
+    flex-basis: 100%;
+    margin-left: 0;
+    margin-right: var(--ep-triangle-width);
+  }
+  #epRow .ep-arrow {
+    width: 100%;
+  }
+  #epRow .ep-arrow .triangle {
+    left: auto;
+    right: calc(-1 * var(--ep-triangle-width));
+    border-right: none;
+    border-left: var(--ep-triangle-width) solid transparent;
+  }
+  #epRow #ep_value {
+    /* enlarge value when arrow wraps below */
+    font-size: 2.8rem;
+  }
+}
+
+footer#appFooter {
+  text-align: center;
+  margin-top: 0;
+  font-size: 0.8rem;
+  background: var(--form-bg);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.25rem;
+}
+
+#footerDivider {
+  border: none;
+  border-top: 3px solid var(--header-bg);
+  margin: 2rem 0 0;
+  width: 100%;
+  box-sizing: border-box;
+}

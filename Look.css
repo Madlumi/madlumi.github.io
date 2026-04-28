@@ -1,0 +1,121 @@
+
+:root {
+  --c1:  #3CB371; 
+  --c2:  #cadaca;
+  --linkCol:  #3CB3A1; 
+  --linkClCol:  #5C9381; 
+  --linkHoCol:  #AB8391; 
+  --textCol:  #000a00;
+	--bg-col:#1f0011;
+	--txt-col:#33ff11;
+	--border-col:#00ff00;
+	--content-bg-col:#664400;
+}
+p {
+	color: var(--textCol);
+} 
+a:link {color: var(--linkCol);}
+a:visited {color: var(--linkClCol);}
+a:hover {color: var(--linkHoCol);}
+.main-img {
+  border: .6em solid var(--c1);
+  margin:.6em .6em;
+}
+.main-box {
+  background-color: var(--c2);
+  width: 60%;
+  min-width: 15em;
+  border: 1em solid var(--c1);
+  padding: 1em;
+  margin: 2em;
+     margin-left:auto;
+    margin-right:auto;
+  text-align: center;
+  margin:8em auto;
+}
+ 
+html, body {
+	margin: 0 auto;
+}
+
+html {background-color: var(--bg-col);}
+.content {
+   margin: 1em 1em;
+	border: 3px solid var(--border-col);;
+	padding: 10px;
+	text-align: center;
+	color:var(--txt-col);
+	background-color: var(--content-bg-col);
+}
+
+.content.img{
+margin-top:2%;
+margin-bottom:auto;
+}
+.content.img.right {
+margin-right:5%; 
+margin-left:1%;
+}
+.content.img.left {
+margin-right:1%; 
+margin-left:5%;
+}
+.content.top {
+   border-bottom: 0px;
+}
+.content.bottom {
+   border-top: 0px;
+}
+.content.mid{
+   border-bottom: 0px;
+   border-top: 0px;
+}
+ .head {
+	 position: fixed;
+	 top: 0px;
+	 left 0px;
+	 margin: 0px 0px;
+	 width: 100%;
+	 padding: 0px;
+	 text-align: center;
+ }
+ .headTab{
+table-layout: fixed;
+	 width: 100%;
+	 margin: 0px auto;
+	 padding: 0px;
+ }
+ .headTh{
+	 padding: 0px;
+	 text-align: center;
+	 margin: 0 auto;
+	 border: 1x solid var(--border-col);;
+	 color:var(--txt-col);
+	 background-color: var(--content-bg-col);
+ }
+
+ /*top banner*/
+.top_link {
+  color: var(--c2);
+}
+.head-th{
+  border-left: 2px solid var(--c2);
+  border-right: 2px solid var(--c2);;
+  color: var(--c2);
+}
+.head-th:first-child {
+  border-left: 0px solid black;
+  border-right: 0px solid black;
+}
+.head-th:last-child {
+  border-left: 0px solid black;
+  border-right: 0px solid black;
+}
+.head-tbl table, th, td {
+  border-collapse: collapse;
+}
+
+
+
+
+
